@@ -25,16 +25,16 @@ jobs:
       run: dotnet restore
       
     - name: Build
-      run: dotnet build --configuration Release --no-restore
+      run: dotnet build ./App/App.csproj --configuration Release --no-restore
     
     - name: Test
-      run: dotnet test --no-restore --verbosity normal
+      run: dotnet test ./App/App.csproj --no-restore --verbosity normal
 
     - name: Publish Linux
-      run: dotnet publish --configuration Release --no-restore -r linux-x64 -p:PublishSingleFile=true --self-contained --output ./publish-linux
+      run: dotnet publish ./App/App.csproj --configuration Release --no-restore -r linux-x64 -p:PublishSingleFile=true --self-contained --output ./publish-linux
 
     - name: Publish Windows
-      run: dotnet publish --configuration Release --no-restore -r win-x64 -p:PublishSingleFile=true --self-contained --output ./publish-win
+      run: dotnet publish ./App/App.csproj --configuration Release --no-restore -r win-x64 -p:PublishSingleFile=true --self-contained --output ./publish-win
 
     - name: Publish Linux Artifact
       uses: actions/upload-artifact@v3
