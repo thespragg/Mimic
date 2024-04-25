@@ -30,11 +30,6 @@ jobs:
     - name: Test
       run: dotnet test ./App/App.csproj --no-restore --verbosity normal
 
-  publish_and_upload:
-    needs: build_and_test
-    name: publish-and-upload
-    runs-on: ubuntu-latest
-
     - name: Publish Linux
       run: dotnet publish ./App/App.csproj --configuration Release -r linux-x64 -p:PublishSingleFile=true --self-contained --output ./publish-linux
 
