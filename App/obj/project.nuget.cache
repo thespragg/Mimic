@@ -1,0 +1,10 @@
+{
+  "version": 2,
+  "dgSpecHash": "tEuzk5UGGSlUzuEcINjVysEezCyoeoJ/BTHrL/p72J8h7w/ExsJslizNaj8TAk6bb3EfnR78tU/dwUpkAN9cbg==",
+  "success": true,
+  "projectFilePath": "/Users/spragg/Programming/Mimic/App/App.csproj",
+  "expectedPackageFiles": [
+    "/Users/spragg/.nuget/packages/commandlineparser/2.9.1/commandlineparser.2.9.1.nupkg.sha512"
+  ],
+  "logs": []
+}
