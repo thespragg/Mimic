@@ -30,11 +30,15 @@ jobs:
     - name: Test
       run: dotnet test ./App/App.csproj --no-restore --verbosity normal
 
+  publish_and_upload:
+    name: publish-and-upload
+    runs-on: ubuntu-latest
+
     - name: Publish Linux
-      run: dotnet publish ./App/App.csproj --configuration Release --no-restore -r linux-x64 -p:PublishSingleFile=true --self-contained --output ./publish-linux
+      run: dotnet publish ./App/App.csproj --configuration Release -r linux-x64 -p:PublishSingleFile=true --self-contained --output ./publish-linux
 
     - name: Publish Windows
-      run: dotnet publish ./App/App.csproj --configuration Release --no-restore -r win-x64 -p:PublishSingleFile=true --self-contained --output ./publish-win
+      run: dotnet publish ./App/App.csproj --configuration Release -r win-x64 -p:PublishSingleFile=true --self-contained --output ./publish-win
 
     - name: Publish Linux Artifact
       uses: actions/upload-artifact@v3
