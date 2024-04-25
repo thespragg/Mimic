@@ -1,0 +1,24 @@
+name: Create Release
+
+
+on: 
+  pull_request:
+    branches:
+      - main
+
+## UNCOMMENT WHEN WORKING
+# on:
+#   pull_request:
+#     branches: 
+#       - main
+#     types: [closed]
+
+jobs:
+  create_release:
+    name: create-release
+    if: ${{ github.event.pull_request.merged }}
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Download all workflow run artifacts
+      uses: actions/download-artifact@v4
