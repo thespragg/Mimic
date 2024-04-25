@@ -1,8 +1,0 @@
-services:
- mimic:
-   image: mimic
-   container_name: mimic-users
-   ports:
-     - 8080:8080
-   volumes:
-     - ./endpoints:/endpoints

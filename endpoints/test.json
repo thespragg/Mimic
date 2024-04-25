@@ -1,6 +1,0 @@
-{
-  "/health": {
-    "method": "GET",
-    "response": "{\"status\":\"healthy\"}"
-  }
-}
