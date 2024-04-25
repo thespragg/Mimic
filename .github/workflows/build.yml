@@ -39,11 +39,7 @@ jobs:
     - name: Publish Linux Artifact
       uses: actions/upload-artifact@v3
       with:
-        name: mimic-linux-artifact
-        path: ./publish-linux
-        
-    - name: Publish Windows Artifact
-      uses: actions/upload-artifact@v3
-      with:
-        name: mimic-windows-artifact
-        path: ./publish-win
+        name: build-artifacts
+        path: |
+          ./publish-linux
+          ./publish-win
