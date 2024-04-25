@@ -1,7 +1,11 @@
 name: Create Artifact
 
-on: [push]
-
+on: 
+  push:
+  pull_request:
+    branches:
+      - main
+  
 env:
   DOTNET_VERSION: '8.0.203'
 
