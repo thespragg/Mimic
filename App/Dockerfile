@@ -7,10 +7,9 @@ EXPOSE 8081
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
-COPY ["App.csproj", "App/"]
-RUN dotnet restore "App/App.csproj"
+COPY "App.csproj" .
+RUN dotnet restore "App.csproj"
 COPY . .
-WORKDIR "/src/App"
 RUN dotnet build "App.csproj" -c $BUILD_CONFIGURATION -o /app/build
 
 FROM build AS publish
@@ -19,6 +18,11 @@ RUN dotnet publish "App.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAp
 
 FROM base AS final
 WORKDIR /app
+
+USER root
 RUN mkdir -p /endpoints
+RUN chown $APP_UID /endpoints
+USER $APP_UID
+
 COPY --from=publish /app/publish .
-ENTRYPOINT ["dotnet", "App.dll", "-f \"/endpoints\""]
+ENTRYPOINT ["dotnet", "App.dll", "-d /endpoints"]

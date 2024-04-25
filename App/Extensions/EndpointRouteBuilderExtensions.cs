@@ -15,7 +15,7 @@ public static class EndpointRouteBuilderExtensions
         {
             builder.MapMethods(
                 endpoint.Route,
-                [endpoint.Method],
+                endpoint.Methods,
                 () => JsonDocument.Parse(endpoint.Response ?? ResponseFactory.Create(endpoint.ResponseGenerator))
             );
         }
