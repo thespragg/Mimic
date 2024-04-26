@@ -76,10 +76,10 @@ jobs:
       uses: softprops/action-gh-release@v1
       with:
         files: |
-          ./publish-linux/App
-          ./publish-win/App.exe
+          publish-linux/App
+          publish-win/App.exe
         tag_name: ${{ needs.bump-version.outputs.new_version_with_v }}
-        release_name: Release ${{ needs.bump-version.outputs.new_version_with_v }}
+        name: Release ${{ needs.bump-version.outputs.new_version_with_v }}
         body: |
           ### New version released! :rocket:
         draft: false
