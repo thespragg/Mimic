@@ -74,6 +74,10 @@ jobs:
         git push origin "${{ needs.bump-version.outputs.new_version_with_v }}"
         gh release create --generate-notes "${{ needs.bump-version.outputs.new_version_with_v }}"
 
+    - name: List files in the repository
+      run: |
+        ls ${{ github.workspace }}
+
     - name: Create Release
       id: create_release
       uses: softprops/action-gh-release@v1
