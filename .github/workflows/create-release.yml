@@ -38,6 +38,10 @@ jobs:
   create_release:
     needs: [bump-version]
     name: create-release
+    permissions:
+      contents: write
+    env:
+      GH_TOKEN: ${{ github.token }}
     ## UNCOMMENT WHEN WORKING
     # if: ${{ github.event.pull_request.merged }}
     runs-on: ubuntu-latest
@@ -56,42 +60,38 @@ jobs:
     - name: Publish Windows
       run: dotnet publish ./App/App.csproj --configuration Release -r win-x64 -p:PublishSingleFile=true --self-contained --output ./publish-win
 
-    - name: Create Release
-      id: create_release
-      uses: softprops/action-gh-release@v1
-      with:
-        files: |
-          ./publish-linux/App
-          ./publish-win/App.exe
-        tag_name: v1.0.0
-        release_name: Release v1.0.0
-        body: |
-          Describe your release here
-        draft: false
-        prerelease: false
+    - uses: actions/checkout@v4
+    - name: Push New Tag (temp manual because actions-ecosystem/action-push-tag@v1 is broken)
+      id: tag
+      run: |
+        message='${{ needs.bump-version.outputs.new_version }}: Sha #${{ github.sha }}'
+        git config user.name "${GITHUB_ACTOR}"
+        git config user.email "${GITHUB_ACTOR}@users.noreply.github.com"
+        git tag -a "${{ needs.bump-version.outputs.new_version_with_v }}" -m "${message}"
+        git push origin "${{ needs.bump-version.outputs.new_version_with_v }}"
+        gh release create --generate-notes "${{ needs.bump-version.outputs.new_version_with_v }}"
+
+    - name: Upload Linux Release Asset
+      uses: actions/upload-release-asset@v1
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: ./publish-linux/App
+        asset_name: app-linux-${{ needs.bump-version.outputs.new_version }}-x64
+        asset_content_type: application/octet-stream
+        
+    - name: Upload Windows Release Asset
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: ./publish-win/App.exe
+        asset_name: app-win-${{ needs.bump-version.outputs.new_version }}-x64.exe
+        asset_content_type: application/octet-stream
 
-  create-new-github-release:
-    needs: [create_release]
-    runs-on: ubuntu-latest
-    permissions:
-      contents: write
-    env:
-      GH_TOKEN: ${{ github.token }}
-    steps:
-      - uses: actions/checkout@v4
-      - name: Push New Tag (temp manual because actions-ecosystem/action-push-tag@v1 is broken)
-        id: tag
-        run: |
-          message='${{ needs.bump-version.outputs.new_version }}: Sha #${{ github.sha }}'
-          git config user.name "${GITHUB_ACTOR}"
-          git config user.email "${GITHUB_ACTOR}@users.noreply.github.com"
-          git tag -a "${{ needs.bump-version.outputs.new_version_with_v }}" -m "${message}"
-          git push origin "${{ needs.bump-version.outputs.new_version_with_v }}"
-          gh release create --generate-notes "${{ needs.bump-version.outputs.new_version_with_v }}"
-
-      - name: Add release summary
-        run: |
-          echo '### New version released! :rocket:' >> $GITHUB_STEP_SUMMARY
-          echo 'Version number: ${{ needs.bump-version.outputs.new_version_with_v }}' >> $GITHUB_STEP_SUMMARY
+    - name: Add release summary
+      run: |
+        echo '### New version released! :rocket:' >> $GITHUB_STEP_SUMMARY
+        echo 'Version number: ${{ needs.bump-version.outputs.new_version_with_v }}' >> $GITHUB_STEP_SUMMARY
