@@ -1,4 +1,4 @@
-name: Create Artifacts
+name: Build and Test
 
 on: 
   pull_request:

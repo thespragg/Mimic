@@ -69,7 +69,9 @@ jobs:
         git config user.email "${GITHUB_ACTOR}@users.noreply.github.com"
         git tag -a "${{ needs.bump-version.outputs.new_version_with_v }}" -m "${message}"
         git push origin "${{ needs.bump-version.outputs.new_version_with_v }}"
-        gh release create --generate-notes "${{ needs.bump-version.outputs.new_version_with_v }}"
+        release_data=$(gh release create --generate-notes "${{ needs.bump-version.outputs.new_version_with_v }}")
+        upload_url=$(echo "$release_data" | grep -o 'https://uploads.github.com/repos/.*' | head -1)
+        echo "upload_url=$upload_url" >> $GITHUB_OUTPUT
 
     - name: Upload Linux Release Asset
       uses: actions/upload-release-asset@v1
@@ -80,7 +82,7 @@ jobs:
         asset_path: ./publish-linux/App
         asset_name: app-linux-${{ needs.bump-version.outputs.new_version }}-x64
         asset_content_type: application/octet-stream
-        
+
     - name: Upload Windows Release Asset
       uses: actions/upload-release-asset@v1
       env:
