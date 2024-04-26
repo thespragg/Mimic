@@ -69,31 +69,20 @@ jobs:
         git config user.email "${GITHUB_ACTOR}@users.noreply.github.com"
         git tag -a "${{ needs.bump-version.outputs.new_version_with_v }}" -m "${message}"
         git push origin "${{ needs.bump-version.outputs.new_version_with_v }}"
-        release_data=$(gh release create --generate-notes "${{ needs.bump-version.outputs.new_version_with_v }}")
-        upload_url=$(echo "$release_data" | grep -o 'https://uploads.github.com/repos/.*' | head -1)
-        echo "upload_url=$upload_url" >> $GITHUB_OUTPUT
+        gh release create --generate-notes "${{ needs.bump-version.outputs.new_version_with_v }}"
 
-    - name: Upload Linux Release Asset
-      uses: actions/upload-release-asset@v1
+    - name: Create Release
+      id: create_release
+      uses: softprops/action-gh-release@v1
+      with:
+        files: |
+          ./publish-linux/App
+          ./publish-win/App.exe
+        tag_name: ${{ needs.bump-version.outputs.new_version_with_v }}
+        release_name: Release ${{ needs.bump-version.outputs.new_version_with_v }}
+        body: |
+          ### New version released! :rocket:
+        draft: false
+        prerelease: false
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: ./publish-linux/App
-        asset_name: app-linux-${{ needs.bump-version.outputs.new_version }}-x64
-        asset_content_type: application/octet-stream
-
-    - name: Upload Windows Release Asset
-      uses: actions/upload-release-asset@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: ./publish-win/App.exe
-        asset_name: app-win-${{ needs.bump-version.outputs.new_version }}-x64.exe
-        asset_content_type: application/octet-stream
-
-    - name: Add release summary
-      run: |
-        echo '### New version released! :rocket:' >> $GITHUB_STEP_SUMMARY
-        echo 'Version number: ${{ needs.bump-version.outputs.new_version_with_v }}' >> $GITHUB_STEP_SUMMARY
