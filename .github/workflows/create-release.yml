@@ -17,7 +17,6 @@ env:
 
 jobs:
   get-semver:
-    needs: [is-merged]
     runs-on: ubuntu-latest
     steps:
       - name: Get SemVer label
