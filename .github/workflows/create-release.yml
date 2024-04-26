@@ -20,16 +20,19 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Download all workflow run artifacts
-      uses: actions/download-artifact@v4
+    - name: Publish Linux
+      run: dotnet publish ./App/App.csproj --configuration Release -r linux-x64 -p:PublishSingleFile=true --self-contained --output ./publish-linux
+
+    - name: Publish Windows
+      run: dotnet publish ./App/App.csproj --configuration Release -r win-x64 -p:PublishSingleFile=true --self-contained --output ./publish-win
 
     - name: Create Release
       id: create_release
       uses: softprops/action-gh-release@v1
       with:
         files: |
-          build-artifacts/mimic-linux-artifact/App
-          build-artifacts/mimic-win-artifact/App.exe
+          ./publish-linux/App
+          ./publish-win/App.exe
         tag_name: v1.0.0
         release_name: Release v1.0.0
         body: |
