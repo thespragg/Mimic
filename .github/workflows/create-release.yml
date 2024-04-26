@@ -76,11 +76,7 @@ jobs:
 
     - name: List files in the repository
       run: |
-        ls -a ${{ github.workspace }} 
-
-    - name: List files in the repository
-      run: |
-        ls -a ${{ github.workspace }}/App
+        ls /home/runner/work/Mimic/Mimic/publish-win/
 
     - name: Create Release
       id: create_release
