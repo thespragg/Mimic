@@ -5,6 +5,9 @@ on:
     branches:
       - main
 
+env:
+  DOTNET_VERSION: '8.0.203'
+  
 ## UNCOMMENT WHEN WORKING
 # on:
 #   pull_request:
@@ -20,6 +23,13 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+    - uses: actions/checkout@v4
+
+    - name: Setup .NET Core
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: ${{ env.DOTNET_VERSION }}
+
     - name: Publish Linux
       run: dotnet publish ./App/App.csproj --configuration Release -r linux-x64 -p:PublishSingleFile=true --self-contained --output ./publish-linux
 
