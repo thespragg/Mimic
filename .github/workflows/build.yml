@@ -15,17 +15,9 @@ jobs:
 
     steps:
     - uses: actions/checkout@v4
-
-    - name: Setup .NET Core
-      uses: actions/setup-dotnet@v4
-      with:
-        dotnet-version: ${{ env.DOTNET_VERSION }}
-
-    - name: Install dependencies
-      run: dotnet restore
       
     - name: Build
-      run: dotnet build ./App/App.csproj --configuration Release --no-restore
+      run: cargo build --verbose
     
     - name: Test
-      run: dotnet test ./App/App.csproj --no-restore --verbosity normal
+      run: cargo test --verbose
