@@ -58,10 +58,10 @@ jobs:
         dotnet-version: ${{ env.DOTNET_VERSION }}
 
     - name: Publish Linux
-      run: dotnet publish ./App/App.csproj --configuration Release -r linux-x64 -p:PublishSingleFile=true --self-contained --output ./publish-linux
+      run: dotnet publish ./App/App.csproj --configuration Release -r linux-x64 -p:PublishSingleFile=true --self-contained --output publish-linux
 
     - name: Publish Windows
-      run: dotnet publish ./App/App.csproj --configuration Release -r win-x64 -p:PublishSingleFile=true --self-contained --output ./publish-win
+      run: dotnet publish ./App/App.csproj --configuration Release -r win-x64 -p:PublishSingleFile=true --self-contained --output publish-win
 
     - uses: actions/checkout@v4
     - name: Push New Tag (temp manual because actions-ecosystem/action-push-tag@v1 is broken)
@@ -76,7 +76,11 @@ jobs:
 
     - name: List files in the repository
       run: |
-        ls ${{ github.workspace }}
+        ls -a ${{ github.workspace }} 
+
+    - name: List files in the repository
+      run: |
+        ls -a ${{ github.workspace }}/App
 
     - name: Create Release
       id: create_release
