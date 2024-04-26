@@ -67,17 +67,6 @@ jobs:
       run: |
         ls -a ${{ github.workspace }}
 
-    - uses: actions/checkout@v4
-    - name: Push New Tag (temp manual because actions-ecosystem/action-push-tag@v1 is broken)
-      id: tag
-      run: |
-        message='${{ needs.bump-version.outputs.new_version }}: Sha #${{ github.sha }}'
-        git config user.name "${GITHUB_ACTOR}"
-        git config user.email "${GITHUB_ACTOR}@users.noreply.github.com"
-        git tag -a "${{ needs.bump-version.outputs.new_version_with_v }}" -m "${message}"
-        git push origin "${{ needs.bump-version.outputs.new_version_with_v }}"
-        gh release create --generate-notes "${{ needs.bump-version.outputs.new_version_with_v }}"
-
     - name: Create Release
       id: create_release
       uses: softprops/action-gh-release@v1
@@ -93,3 +82,5 @@ jobs:
         prerelease: false
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+    
