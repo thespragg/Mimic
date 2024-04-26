@@ -31,7 +31,7 @@ jobs:
 
   bump-version:
     needs: [get-semver]
-    uses: ./bump-version.yml@main
+    uses: bump-version.yml@main
     secrets: inherit
     with:
       semver: ${{ needs.get-semver.outputs.semver }}
