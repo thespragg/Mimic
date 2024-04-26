@@ -63,6 +63,10 @@ jobs:
     - name: Publish Windows
       run: dotnet publish ./App/App.csproj --configuration Release -r win-x64 -p:PublishSingleFile=true --self-contained --output publish-win
 
+    - name: List files in the repository
+      run: |
+        ls -a ${{ github.workspace }}
+
     - uses: actions/checkout@v4
     - name: Push New Tag (temp manual because actions-ecosystem/action-push-tag@v1 is broken)
       id: tag
@@ -73,10 +77,6 @@ jobs:
         git tag -a "${{ needs.bump-version.outputs.new_version_with_v }}" -m "${message}"
         git push origin "${{ needs.bump-version.outputs.new_version_with_v }}"
         gh release create --generate-notes "${{ needs.bump-version.outputs.new_version_with_v }}"
-
-    - name: List files in the repository
-      run: |
-        ls /home/runner/work/Mimic/Mimic/publish-win/
 
     - name: Create Release
       id: create_release
