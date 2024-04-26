@@ -45,24 +45,15 @@ jobs:
     steps:
     - uses: actions/checkout@v4
 
-    - name: Setup .NET Core
-      uses: actions/setup-dotnet@v4
-      with:
-        dotnet-version: ${{ env.DOTNET_VERSION }}
-
     - name: Publish Linux
-      run: dotnet publish ./App/App.csproj --configuration Release -r linux-x64 -p:PublishSingleFile=true --self-contained --output publish-linux
-
-    - name: Publish Windows
-      run: dotnet publish ./App/App.csproj --configuration Release -r win-x64 -p:PublishSingleFile=true --self-contained --output publish-win
+      run: CARGO_TARGET_DIR=./publish cargo build --release
 
     - name: Create Release
       id: create_release
       uses: softprops/action-gh-release@v1
       with:
         files: |
-          publish-linux/App
-          publish-win/App.exe
+          publish/release/mimic
         tag_name: ${{ needs.bump-version.outputs.new_version_with_v }}
         name: Release ${{ needs.bump-version.outputs.new_version_with_v }}
         body: |
