@@ -16,7 +16,28 @@ env:
 #     types: [closed]
 
 jobs:
+  get-semver:
+    needs: [is-merged]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Get SemVer label
+        id: semver
+        run: |
+          echo "SemVer label: ${{ steps.filter.labels }}"
+          semver_label=$(echo "${{ steps.filter.labels }}" | awk -F '/' '{print $2}')
+          echo "semver=$semver_label" >> $GITHUB_OUTPUT
+        env:
+          LABELS: ${{ toJson(github.event.pull_request.labels.*.name) }}
+
+  bump-version:
+    needs: [get-semver]
+    uses: ./bump-version.yml@main
+    secrets: inherit
+    with:
+      semver: ${{ needs.get-semver.outputs.semver }}
+
   create_release:
+    needs: [bump-version]
     name: create-release
     ## UNCOMMENT WHEN WORKING
     # if: ${{ github.event.pull_request.merged }}
@@ -51,3 +72,27 @@ jobs:
         prerelease: false
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  create-new-github-release:
+    needs: [create_release]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Push New Tag (temp manual because actions-ecosystem/action-push-tag@v1 is broken)
+        id: tag
+        run: |
+          message='${{ needs.bump-version.outputs.new_version }}: Sha #${{ github.sha }}'
+          git config user.name "${GITHUB_ACTOR}"
+          git config user.email "${GITHUB_ACTOR}@users.noreply.github.com"
+          git tag -a "${{ needs.bump-version.outputs.new_version_with_v }}" -m "${message}"
+          git push origin "${{ needs.bump-version.outputs.new_version_with_v }}"
+          gh release create --generate-notes "${{ needs.bump-version.outputs.new_version_with_v }}"
+
+      - name: Add release summary
+        run: |
+          echo '### New version released! :rocket:' >> $GITHUB_STEP_SUMMARY
+          echo 'Version number: ${{ needs.bump-version.outputs.new_version_with_v }}' >> $GITHUB_STEP_SUMMARY
