@@ -21,7 +21,7 @@ Create a json file (or files) defining the endpoints you want mimic to have:
 
 Run it using the following command:
 
-`docker run -d -p 5999:8080 -v /path/to/folder/containing/your/json/file:/endpoints thespragg/mimic:latest````
+`docker run -d -p 5999:8080 -v /path/to/folder/containing/your/json/file:/endpoints thespragg/mimic:latest`
 
 You will then be able to access the api at `http://localhost:5999`
 
