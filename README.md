@@ -31,5 +31,4 @@ Download the latest version https://github.com/thespragg/Mimic/releases
 
 Run it using either:
 
-`./mimic --file path/to/your/json/file` 
-`./mimic --directory path/to/folder/containing/json/file` 
+`./mimic --file path/to/your/json/file` or `./mimic --directory path/to/folder/containing/json/file` 
